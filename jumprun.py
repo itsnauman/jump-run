@@ -44,8 +44,7 @@ def main():
     db.commit()
 
     if arg['add']:
-        current_dir = subprocess.check_output('pwd')
-        current_dir = current_dir.strip("\n")
+        current_dir = os.getcwd()
         name = arg['<name>']
         filename = arg['<filename>']
         cursor.execute('''
