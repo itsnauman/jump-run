@@ -33,7 +33,7 @@ def main():
     """
     arg = docopt(__doc__, version=0.2)
     db_path = os.path.expanduser("~/Documents")
-    db_path = db_path + "/" + "jumprun"
+    db_path = db_path + "/" + ".jumprun"
     db = sqlite3.connect(db_path)
 
     cursor = db.cursor()
@@ -49,12 +49,19 @@ def main():
         name = arg['<name>']
         filename = arg['<filename>']
         cursor.execute('''
-            INSERT INTO path(name, path, filename)
-            VALUES (?, ?, ?)
-            ''', (str(name), str(current_dir), str(filename)))
-        db.commit()
-        msg = "%s has been added" % (name)
-        print colored(msg, "blue")
+            SELECT path,filename FROM path WHERE name=?
+            ''', (name,))
+        pth = cursor.fetchone()
+        if pth is None:
+            cursor.execute('''
+                INSERT INTO path(name, path, filename)
+                VALUES (?, ?, ?)
+                ''', (str(name), str(current_dir), str(filename)))
+            db.commit()
+            msg = "%s has been added" % (name)
+            print colored(msg, "blue")
+        else:
+            print colored("The name %s already exists" % (name), "red")
 
     if not arg['add'] and not arg['rm']:
         get_name = arg['<name>']
@@ -63,7 +70,7 @@ def main():
             ''', (get_name,))
         pth = cursor.fetchone()
         if pth is None:
-            print colored("Invalid Command, create it with jr add", "red")
+            print colored("Invalid name, go jr --help for creating one", "red")
         else:
             file_path = str(pth[0])
             file_name = str(pth[1])
