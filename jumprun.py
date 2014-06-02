@@ -1,7 +1,7 @@
 """Jumprun
 
 Usage:
-  jr add <name> <filename>
+  jr add <name> <filename> (--python | --ruby)
   jr rm [<name>] [--all]
   jr <name>
   jr -h | --help
@@ -74,7 +74,10 @@ def main():
         else:
             file_path = str(pth[0])
             file_name = str(pth[1])
-            cmd = "python %s" % (file_name)
+            if arg['--python']:
+                cmd = "python %s" % (file_name)
+            if arg['--ruby']:
+                cmd = "ruby %s" % (file_name)
             os.chdir(file_path)
             print colored("Running Script.......", "yellow")
             subprocess.call(cmd, shell=True)
