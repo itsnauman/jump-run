@@ -76,11 +76,14 @@ def main():
             file_name = str(pth[1])
             if arg['--python']:
                 cmd = "python %s" % (file_name)
-            if arg['--ruby']:
+                os.chdir(file_path)
+                print colored("Running Script.......", "yellow")
+                subprocess.call(cmd, shell=True)
+            else:
                 cmd = "ruby %s" % (file_name)
-            os.chdir(file_path)
-            print colored("Running Script.......", "yellow")
-            subprocess.call(cmd, shell=True)
+                os.chdir(file_path)
+                print colored("Running Script.......", "yellow")
+                subprocess.call(cmd, shell=True)
 
     if arg['rm']:
         if arg['--all']:
