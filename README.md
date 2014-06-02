@@ -1,6 +1,6 @@
 jumprun
 =======
-A command-line tool for running python scripts from any directory in terminal.
+A command-line tool for running python scripts from any directory in terminal, I actually developed this tool for myself as I hate to cd into successive directories to run python scripts - jumprun allows me to do it from any directory. I hope you guys find this usefull :D
 
 ###Installation:
 jumprun can be installed using PyPi, ```pip install jumprun```
