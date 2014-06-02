@@ -2,10 +2,10 @@ from setuptools import setup
 
 setup(
     name='jumprun',
-    version='0.2',
+    version='0.3',
     py_modules=['jumprun'],
-    description='CLI app for running python scripts from any directory'
-                ' in terminal',
+    description='CLI app for running python and ruby scripts from any'
+                ' directory in terminal',
     url='http://github.com/itsnauman/jumprun',
     author='Nauman Ahmad',
     author_email='nauman-ahmad@outlook.com',

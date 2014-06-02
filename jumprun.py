@@ -70,7 +70,7 @@ def main():
             ''', (get_name,))
         pth = cursor.fetchone()
         if pth is None:
-            print colored("Invalid name, go jr --help for creating one", "red")
+            print colored("Invalid name, type jr --help for help", "red")
         else:
             file_path = str(pth[0])
             file_name = str(pth[1])

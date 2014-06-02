@@ -1,7 +1,6 @@
 jumprun
 =======
 A command-line tool for running python scripts from any directory in terminal.
-<a href="http://imgur.com/6D03m56"><img src="http://i.imgur.com/6D03m56.png" title="Hosted by imgur.com" /></a>
 
 ###Installation:
 jumprun can be installed using PyPi, ```pip install jumprun```
