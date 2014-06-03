@@ -29,13 +29,14 @@ from termcolor import colored
 
 def main():
     """
-    This is the main function run by *entry_point*
+    This is the main function run by *entry_point* in setup.py
     """
-    arg = docopt(__doc__, version=0.2)
+    arg = docopt(__doc__, version=0.4)
+    #creates a hidden database in users/documents
     db_path = os.path.expanduser("~/Documents")
     db_path = db_path + "/" + ".jumprun"
     db = sqlite3.connect(db_path)
-
+    #Creates table if doesn't exist on the execution of the script
     cursor = db.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS path(id INTEGER PRIMARY KEY, name TEXT,
@@ -43,7 +44,9 @@ def main():
         ''')
     db.commit()
 
+#This condition handles the *add* command
     if arg['add']:
+        #Get the path of the current dir
         current_dir = os.getcwd()
         name = arg['<name>']
         filename = arg['<filename>']
@@ -51,6 +54,7 @@ def main():
             SELECT path,filename FROM path WHERE name=?
             ''', (name,))
         pth = cursor.fetchone()
+        #Checks for conflicts in the database
         if pth is None:
             cursor.execute('''
                 INSERT INTO path(name, path, filename)
@@ -68,11 +72,13 @@ def main():
             SELECT path,filename FROM path WHERE name=?
             ''', (get_name,))
         pth = cursor.fetchone()
+        #Checks if the user has made an entry using jr add
         if pth is None:
-            print colored("Invalid name, type jr --help for help", "red")
+            print colored("Invalid name, type jr --help for more...", "red")
         else:
             file_path = str(pth[0])
             file_name = str(pth[1])
+            #Handles the execution of python/ruby scripts in the terminal
             if arg['--python']:
                 cmd = "python %s" % (file_name)
                 os.chdir(file_path)
@@ -84,14 +90,25 @@ def main():
                 print colored("Running Script.......", "yellow")
                 subprocess.call(cmd, shell=True)
 
+#This condition the execution of *rm* command
     if arg['rm']:
+        #Code for refreshing the entire database
         if arg['--all']:
             os.remove(db_path)
             print colored("The database has been refreshed :)", "red")
         else:
+            #Code for deleteing a specific name from database
             name = arg['<name>']
             cursor.execute('''
-                DELETE FROM path WHERE name=?
-                ''', (name,))
-            db.commit()
-            print colored("%s has been deleted" % (name), "red")
+            SELECT path,filename FROM path WHERE name=?
+            ''', (name,))
+            pth = cursor.fetchone()
+            #Checks if the record to be deleted exists?
+            if pth is None:
+                print colored("%s doesn't exist" % (name), "red")
+            else:
+                cursor.execute('''
+                    DELETE FROM path WHERE name=?
+                    ''', (name,))
+                db.commit()
+                print colored("%s has been deleted" % (name), "red")
