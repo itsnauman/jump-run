@@ -34,7 +34,6 @@ import os
 from termcolor import colored
 
 #Emoji's
-M = "\xF0\x9F\x98\x81"
 S = "\xF0\x9F\x98\x83"
 L = "\xF0\x9F\x8D\xAD"
 B = "\xF0\x9F\x8D\xBA"
@@ -87,7 +86,8 @@ def main():
         pth = cursor.fetchone()
         #Checks if the user has made an entry using jr add
         if pth is None:
-            print colored("Invalid name, type jr --help for more...", "red")
+            print colored("Invalid name, type jr --help for more... " + "B",
+                          "red")
         else:
             file_path = str(pth[0])
             file_name = str(pth[1])
@@ -136,7 +136,7 @@ def main():
         pth = cursor.fetchone()
         #Checks if the shortcut to be renamed exists?
         if pth is None:
-            print colored("%s doesn't exist", "red")
+            print colored("%s doesn't exist" % (old_name), "red")
         else:
             cursor.execute('''
             SELECT path,filename FROM path WHERE name=?
@@ -156,5 +156,5 @@ def main():
                 VALUES (?, ?, ?)
                 ''', (str(new_name), str(old_path), str(old_filename)))
                 db.commit()
-                msg = "%s has been renamed to %s" % (old_name, new_name)
+                msg = "%s has been renamed to %s %s" % (old_name, new_name, L)
                 print colored(msg, "blue")
