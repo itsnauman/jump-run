@@ -16,7 +16,7 @@ This tool is made for unix based OS’s because I hate windows :3
 Installation:
 ~~~~~~~~~~~~~
 
-jumprun can be installed using PyPi, \`pip install jumprun
+jumprun can be installed using PyPi, ``pip install jumprun``
 
 Dependencies:
 ~~~~~~~~~~~~~
