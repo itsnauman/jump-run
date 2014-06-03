@@ -15,9 +15,9 @@ Arguments:
     newname     The name of the new shortcut
 
 Commands:
-    add     Add a new shortcut
-    rm      Delete shortcuts from the database
-    rename  Rename the shortcut already created
+    add         Add a new shortcut
+    rm          Delete shortcuts from the database
+    rename      Rename the shortcut already created
 
 Options:
   -h --help     Show this screen.
@@ -32,6 +32,12 @@ import sqlite3
 import subprocess
 import os
 from termcolor import colored
+
+#Emoji's
+M = "\xF0\x9F\x98\x81"
+S = "\xF0\x9F\x98\x83"
+L = "\xF0\x9F\x8D\xAD"
+B = "\xF0\x9F\x8D\xBA"
 
 
 def main():
@@ -68,7 +74,7 @@ def main():
                 VALUES (?, ?, ?)
                 ''', (str(name), str(current_dir), str(filename)))
             db.commit()
-            msg = "%s has been added" % (name)
+            msg = "%s has been added %s" % (name, L)
             print colored(msg, "blue")
         else:
             print colored("The name %s already exists" % (name), "red")
@@ -102,7 +108,7 @@ def main():
         #Code for refreshing the entire database
         if arg['--all']:
             os.remove(db_path)
-            print colored("The database has been refreshed :)", "red")
+            print colored("The database has been refreshed :) %s" % S, "red")
         else:
             #Code for deleteing a specific name from database
             name = arg['<name>']
@@ -118,7 +124,7 @@ def main():
                     DELETE FROM path WHERE name=?
                     ''', (name,))
                 db.commit()
-                print colored("%s has been deleted" % (name), "red")
+                print colored("%s has been deleted %s" % (name, L), "red")
 
 #This condition handles the *rename* command
     if arg['rename']:
@@ -152,5 +158,3 @@ def main():
                 db.commit()
                 msg = "%s has been renamed to %s" % (old_name, new_name)
                 print colored(msg, "blue")
-
-
