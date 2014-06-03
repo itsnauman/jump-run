@@ -3,6 +3,7 @@
 Usage:
   jr add <name> <filename> (--python | --ruby)
   jr rm [<name>] [--all]
+  jr rename <oldname> <newname>
   jr <name>
   jr -h | --help
   jr --version
@@ -10,14 +11,20 @@ Usage:
 Arguments:
     name        The name of the command
     filename    The name of the file you want to execute
+    oldname     The name of the old shortcut
+    newname     The name of the new shortcut
 
 Commands:
-    add   Add a new command
-    rm    Refresh the database
+    add     Add a new shortcut
+    rm      Delete shortcuts from the database
+    rename  Rename the shortcut already created
 
 Options:
   -h --help     Show this screen.
   --version     Show version.
+  --all         Delete all shortcuts from the database
+  --python      Specifies a Python interpreter
+  --ruby        Specifies a ruby interpreter
 """
 
 from docopt import docopt
@@ -66,7 +73,7 @@ def main():
         else:
             print colored("The name %s already exists" % (name), "red")
 
-    if not arg['add'] and not arg['rm']:
+    if not arg['add'] and not arg['rm'] and not arg['rename']:
         get_name = arg['<name>']
         cursor.execute('''
             SELECT path,filename FROM path WHERE name=?
@@ -90,7 +97,7 @@ def main():
                 print colored("Running Script.......", "yellow")
                 subprocess.call(cmd, shell=True)
 
-#This condition the execution of *rm* command
+#This condition handles the *rm* command
     if arg['rm']:
         #Code for refreshing the entire database
         if arg['--all']:
@@ -103,7 +110,7 @@ def main():
             SELECT path,filename FROM path WHERE name=?
             ''', (name,))
             pth = cursor.fetchone()
-            #Checks if the record to be deleted exists?
+            #Checks if the shortcut to be deleted exists?
             if pth is None:
                 print colored("%s doesn't exist" % (name), "red")
             else:
@@ -112,3 +119,38 @@ def main():
                     ''', (name,))
                 db.commit()
                 print colored("%s has been deleted" % (name), "red")
+
+#This condition handles the *rename* command
+    if arg['rename']:
+        old_name = arg['<oldname>']
+        new_name = arg['<newname>']
+        cursor.execute('''
+            SELECT name, path, filename FROM path WHERE name=?
+            ''', (old_name,))
+        pth = cursor.fetchone()
+        #Checks if the shortcut to be renamed exists?
+        if pth is None:
+            print colored("%s doesn't exist", "red")
+        else:
+            cursor.execute('''
+            SELECT path,filename FROM path WHERE name=?
+            ''', (new_name,))
+            q = cursor.fetchone()
+            #Checks if the new shortcut name is already present
+            if q is not None:
+                print colored("The name %s already exists", "red")
+            else:
+                old_path = pth[1]
+                old_filename = pth[2]
+                cursor.execute('''
+                    DELETE FROM path WHERE name=?
+                    ''', (old_name,))
+                cursor.execute('''
+                INSERT INTO path(name, path, filename)
+                VALUES (?, ?, ?)
+                ''', (str(new_name), str(old_path), str(old_filename)))
+                db.commit()
+                msg = "%s has been renamed to %s" % (old_name, new_name)
+                print colored(msg, "blue")
+
+
