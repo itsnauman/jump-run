@@ -34,7 +34,7 @@ makes an entry in the db - the db is created in documents under the name
 ``jr SHORTCUT-NAME`` to execute the script. You can refresh the db by
 running ``jr rm --all`` or delete one specific name by
 ``jr rm SHORTCUT-NAME``. You can also rename an existing shortcut by
-running ``jr rename OLD-NAME NEW-NAME``. Run ``jr --help`` for more :)
+running ``jr rename OLD-NAME NEW-NAME``. You can also get the list of all shortcuts with ``jr show`` or ``jr show --f`` to show the file name as well. Run ``jr --help`` for more :)
 
 License:
 ~~~~~~~~
