@@ -36,6 +36,36 @@ running ``jr rm --all`` or delete one specific name by
 ``jr rm SHORTCUT-NAME``. You can also rename an existing shortcut by
 running ``jr rename OLD-NAME NEW-NAME``. You can also get the list of all shortcuts with ``jr show`` or ``jr show --f`` to show the file name as well. Run ``jr --help`` for more :)
 
+.. code:: python
+
+  Usage:
+  jr add <name> <filename> (--python | --ruby)
+  jr rm [<name>] [--all]
+  jr show [--f]
+  jr rename <oldname> <newname>
+  jr <name>
+  jr -h | --help
+  jr --version
+
+  Arguments:
+    name        The name of the command
+    filename    The name of the file you want to execute
+    oldname     The name of the old shortcut
+    newname     The name of the new shortcut
+
+  Commands:
+    add         Add a new shortcut
+    rm          Delete shortcuts from the database
+    rename      Rename the shortcut already created
+    show        Display the names of all shorcuts added
+
+  Options:
+  -h --help     Show this screen.
+  --version     Show version.
+  --all         Delete all shortcuts from the database
+  --python      Specifies a Python interpreter
+  --ruby        Specifies a ruby interpreter
+  --f           Fetch all names along with file names
 License:
 ~~~~~~~~
 
