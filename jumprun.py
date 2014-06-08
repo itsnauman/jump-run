@@ -1,4 +1,4 @@
-"""Jumprun
+"""Jumprun, your command line companion
 
 Usage:
   jr add <name> <filename> (--python | --ruby)
@@ -8,12 +8,6 @@ Usage:
   jr <name>
   jr -h | --help
   jr --version
-
-Arguments:
-    name        The name of the command
-    filename    The name of the file you want to execute
-    oldname     The name of the old shortcut
-    newname     The name of the new shortcut
 
 Commands:
     add         Add a new shortcut
