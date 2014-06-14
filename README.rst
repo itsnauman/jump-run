@@ -1,9 +1,8 @@
+jumprun
+=======
 .. image:: https://pypip.in/download/jumprun/badge.png
     :target: https://pypi.python.org/pypi//jumprun/
     :alt: Downloads
-jumprun
-=======
-    
 A unix command-line tool for running scripts from any directory in
 terminal, I actually developed this tool for myself as I hate to cd into
 successive directories to run python scripts - jumprun allows me to do
@@ -39,7 +38,7 @@ running ``jr rm --all`` or delete one specific name by
 ``jr rm SHORTCUT-NAME``. You can also rename an existing shortcut by
 running ``jr rename OLD-NAME NEW-NAME``. You can also get the list of all shortcuts with ``jr show`` or ``jr show --f`` to show the file name as well. Run ``jr --help`` for more :)
 
-.. code:: python
+.. code::
 
   Usage:
   jr add <name> <filename> (--python | --ruby)
@@ -49,12 +48,6 @@ running ``jr rename OLD-NAME NEW-NAME``. You can also get the list of all shortc
   jr <name>
   jr -h | --help
   jr --version
-
-  Arguments:
-    name        The name of the command
-    filename    The name of the file you want to execute
-    oldname     The name of the old shortcut
-    newname     The name of the new shortcut
 
   Commands:
     add         Add a new shortcut
