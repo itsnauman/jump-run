@@ -42,7 +42,7 @@ def main():
     """
     arg = docopt(__doc__, version=0.6)
     #creates a hidden database in users/documents
-    db_path = os.path.expanduser("~/Documents")
+    db_path = os.path.expanduser("~/")
     db_path = db_path + "/" + ".jumprun"
     db = sqlite3.connect(db_path)
     #Creates table if doesn't exist on the execution of the script
