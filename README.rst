@@ -1,6 +1,9 @@
+.. image:: https://pypip.in/download/jumprun/badge.png
+    :target: https://pypi.python.org/pypi//jumprun/
+    :alt: Downloads
 jumprun
 =======
-
+    
 A unix command-line tool for running scripts from any directory in
 terminal, I actually developed this tool for myself as I hate to cd into
 successive directories to run python scripts - jumprun allows me to do
