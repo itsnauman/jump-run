@@ -21,14 +21,13 @@ Options:
   --all         Delete all shortcuts from the database
   --python      Specifies a Python interpreter
   --ruby        Specifies a ruby interpreter
-  --f           Fetch all names along with file names
+  --f           Fetch all shortcut names along with file names
 """
-
-from docopt import docopt
 import sqlite3
 import subprocess
 import os
 from termcolor import colored
+from docopt import docopt
 
 #Emoji's
 S = "\xF0\x9F\x98\x83"
@@ -59,21 +58,24 @@ def main():
         current_dir = os.getcwd()
         name = arg['<name>']
         filename = arg['<filename>']
-        cursor.execute('''
-        SELECT path,filename FROM path WHERE name=?
-            ''', (name,))
-        pth = cursor.fetchone()
-        #Checks for conflicts in the database
-        if pth is None:
+        if os.path.exists(os.getcwd() + "/" + "filename"):
             cursor.execute('''
-            INSERT INTO path(name, path, filename)
-            VALUES (?, ?, ?)
-                ''', (str(name), str(current_dir), str(filename)))
-            db.commit()
-            msg = "%s has been added %s" % (name, L)
-            print colored(msg, "blue")
+            SELECT path,filename FROM path WHERE name=?
+                ''', (name,))
+            pth = cursor.fetchone()
+            #Checks for conflicts in the database
+            if pth is None:
+                cursor.execute('''
+                INSERT INTO path(name, path, filename)
+                VALUES (?, ?, ?)
+                    ''', (str(name), str(current_dir), str(filename)))
+                db.commit()
+                msg = "%s has been added %s" % (name, L)
+                print colored(msg, "blue")
+            else:
+                print colored("The name %s already exists" % (name), "red")
         else:
-            print colored("The name %s already exists" % (name), "red")
+            print colored("The file doesn't exist %s" % S, "red")
 
     if not arg['add'] and not arg['rm'] and not arg['rename'] and not \
     arg['show']:
@@ -106,7 +108,7 @@ def main():
         #Code for refreshing the entire database
         if arg['--all']:
             os.remove(db_path)
-            print colored("The database has been refreshed :) %s" % S, "red")
+            print colored("The database has been refreshed %s" % S, "red")
         else:
             #Code for deleteing a specific name from database
             name = arg['<name>']
@@ -168,7 +170,10 @@ def main():
                 print colored("No shortcuts present", "red")
             else:
                 for each_name in all_records:
-                    print colored(each_name[0] + " --> " + each_name[1], "red")
+                    print colored(each_name[0] + " -----> " +
+                                  each_name[1],
+                                  "red"
+                                  )
         else:
             cursor.execute('''
             SELECT name FROM path
