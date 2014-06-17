@@ -5,43 +5,36 @@ jumprun
     :alt: Downloads
 A unix command-line tool for running scripts from any directory in
 terminal, I actually developed this tool for myself as I hate to cd into
-successive directories to run python scripts - jumprun allows me to do
-it from any directory buy making shortcuts. Currently only python and
-ruby interpreter are supported but you can add support for others like
-Perl or PHP. I hope you guys find this useful :D
+successive directories to run scripts - jumprun allows me to do
+it from any directory buy making shortcuts. At the current moment Perl5,
+Ruby and Python interpreters are supported.
 
 Platform:
 ~~~~~~~~~
-
-This tool is made for unix based OS’s because I hate windows :3
+This tool is strictly for UNIX based OS.
 
 Installation:
 ~~~~~~~~~~~~~
-
-jumprun can be installed using PyPi, ``pip install jumprun``
+jumprun can be installed using PyPi, ``pip install jumprun``.
 
 Dependencies:
 ~~~~~~~~~~~~~
-
-This tool makes use of docopt - for command line parsing, termcolor -
-for colorful outputs and sqlite3 - for db.
+This tool makes use of docopt - for command line parsing and termcolor -
+for colorful outputs.
 
 Usage:
 ~~~~~~
-
-cd to the directory where the python script is present, then run
-``jr add SHORTCUT-NAME python-scripts-name.py --python or --ruby``. This
-makes an entry in the db - the db is created in documents under the name
-``.jumprun``. Now you can simply run the script from any dir by
-``jr SHORTCUT-NAME`` to execute the script. You can refresh the db by
-running ``jr rm --all`` or delete one specific name by
-``jr rm SHORTCUT-NAME``. You can also rename an existing shortcut by
-running ``jr rename OLD-NAME NEW-NAME``. You can also get the list of all shortcuts with ``jr show`` or ``jr show --f`` to show the file name as well. Run ``jr --help`` for more :)
+* Add a python shortcut with ``jr add NAME file.py``
+* Run the script from any dir in terminal using ``jr NAME``.
+* Refresh the entire db with ``jr rm --all``
+* Delete a specfic shortcut with ``jr rm NAME``
+* Rename a shortcut with ``jr rename OLDNAME NEWNAME``
+* List all shortcuts with ``jr show``
 
 .. code::
 
   Usage:
-  jr add <name> <filename> (--python | --ruby)
+  jr add <name> <filename>
   jr rm [<name>] [--all]
   jr show [--f]
   jr rename <oldname> <newname>
@@ -49,20 +42,22 @@ running ``jr rename OLD-NAME NEW-NAME``. You can also get the list of all shortc
   jr -h | --help
   jr --version
 
-  Commands:
+Commands:
     add         Add a new shortcut
-    rm          Delete shortcuts from the database
-    rename      Rename the shortcut already created
-    show        Display the names of all shorcuts added
+    rm          Delete a shortcut
+    rename      Rename a shortcut
+    show        List all shortcuts
 
-  Options:
+Options:
   -h --help     Show this screen.
   --version     Show version.
   --all         Delete all shortcuts from the database
-  --python      Specifies a Python interpreter
-  --ruby        Specifies a ruby interpreter
-  --f           Fetch all names along with file names
+  --f           Fetch all shortcut names along with file names
+
+Whats new in version 0.8 ?:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In version 0.8, you don't need to specify the interpreter for running the script, eg previously it was ``jr add NAME file.py --python``. Now you only need to do ``jr add NAME file.py`` and the interpreter will automatically be selected.
+
 License:
 ~~~~~~~~
-
 MIT, see LICENSE for more details.
