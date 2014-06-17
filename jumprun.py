@@ -1,7 +1,7 @@
 """Jumprun, your command line companion
 
 Usage:
-  jr add <name> <filename> (--python | --ruby)
+  jr add <name> <filename>
   jr rm [<name>] [--all]
   jr show [--f]
   jr rename <oldname> <newname>
@@ -11,16 +11,14 @@ Usage:
 
 Commands:
     add         Add a new shortcut
-    rm          Delete shortcuts from the database
-    rename      Rename the shortcut already created
-    show        Display the names of all shorcuts added
+    rm          Delete a shortcut
+    rename      Rename a shortcut
+    show        List all shortcuts
 
 Options:
   -h --help     Show this screen.
   --version     Show version.
   --all         Delete all shortcuts from the database
-  --python      Specifies a Python interpreter
-  --ruby        Specifies a ruby interpreter
   --f           Fetch all shortcut names along with file names
 """
 import sqlite3
@@ -39,7 +37,7 @@ def main():
     """
     This is the main function run by *entry_point* in setup.py
     """
-    arg = docopt(__doc__, version=0.71)
+    arg = docopt(__doc__, version=0.80)
     #creates a hidden database in users/documents
     db_path = os.path.expanduser("~/")
     db_path = db_path + "/" + ".jumprun"
@@ -58,7 +56,7 @@ def main():
         current_dir = os.getcwd()
         name = arg['<name>']
         filename = arg['<filename>']
-        if os.path.exists(os.getcwd() + "/" + "filename"):
+        if os.path.isfile(os.getcwd() + "/" + filename):
             cursor.execute('''
             SELECT path,filename FROM path WHERE name=?
                 ''', (name,))
@@ -71,11 +69,11 @@ def main():
                     ''', (str(name), str(current_dir), str(filename)))
                 db.commit()
                 msg = "%s has been added %s" % (name, L)
-                print colored(msg, "blue")
+                print colored(msg, "cyan")
             else:
                 print colored("The name %s already exists" % (name), "red")
         else:
-            print colored("The file doesn't exist %s" % S, "red")
+            print "The File Doesn't Exist"
 
     if not arg['add'] and not arg['rm'] and not arg['rename'] and not \
     arg['show']:
@@ -92,23 +90,36 @@ def main():
             file_path = str(pth[0])
             file_name = str(pth[1])
             #Handles the execution of python/ruby scripts in the terminal
-            if arg['--python']:
+            if os.path.splitext(file_name)[1] == ".py":
                 cmd = "python %s" % (file_name)
                 os.chdir(file_path)
-                print colored("Running Script.......", "yellow")
+                print colored("Running Script:", "cyan")
                 subprocess.call(cmd, shell=True)
-            else:
+
+            elif os.path.splitext(file_name)[1] == ".rb":
                 cmd = "ruby %s" % (file_name)
                 os.chdir(file_path)
-                print colored("Running Script.......", "yellow")
+                print colored("Running Script:", "cyan")
                 subprocess.call(cmd, shell=True)
+
+            elif os.path.splitext(file_name)[1] == ".pl":
+                cmd = "perl %s" % (file_name)
+                os.chdir(file_path)
+                print colored("Running Script:", "cyan")
+                subprocess.call(cmd, shell=True)
+
+            else:
+                ext = os.path.splitext(file_name)[1]
+                print colored("The %s extension is not supported" % ext,
+                              "red"
+                              )
 
 #This condition handles the *rm* command
     if arg['rm']:
         #Code for refreshing the entire database
         if arg['--all']:
             os.remove(db_path)
-            print colored("The database has been refreshed %s" % S, "red")
+            print colored("The database has been refreshed %s" % S, "cyan")
         else:
             #Code for deleteing a specific name from database
             name = arg['<name>']
@@ -124,7 +135,7 @@ def main():
                     DELETE FROM path WHERE name=?
                     ''', (name,))
                 db.commit()
-                print colored("%s has been deleted %s" % (name, L), "red")
+                print colored("%s has been deleted %s" % (name, L), "cyan")
 
 #This condition handles the *rename* command
     if arg['rename']:
@@ -170,9 +181,9 @@ def main():
                 print colored("No shortcuts present", "red")
             else:
                 for each_name in all_records:
-                    print colored(each_name[0] + " -----> " +
+                    print colored(each_name[0] + " ---> " +
                                   each_name[1],
-                                  "red"
+                                  "cyan"
                                   )
         else:
             cursor.execute('''
@@ -183,4 +194,4 @@ def main():
                 print colored("No shorcuts present", "red")
             else:
                 for each_name in all_names:
-                    print colored(each_name[0], "yellow")
+                    print colored(each_name[0], "cyan")
