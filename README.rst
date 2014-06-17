@@ -30,29 +30,7 @@ Usage:
 * Delete a specfic shortcut with ``jr rm NAME``
 * Rename a shortcut with ``jr rename OLDNAME NEWNAME``
 * List all shortcuts with ``jr show``
-
-.. code::
-
-  Usage:
-  jr add <name> <filename>
-  jr rm [<name>] [--all]
-  jr show [--f]
-  jr rename <oldname> <newname>
-  jr <name>
-  jr -h | --help
-  jr --version
-
-Commands:
-    add         Add a new shortcut
-    rm          Delete a shortcut
-    rename      Rename a shortcut
-    show        List all shortcuts
-
-Options:
-  -h --help     Show this screen.
-  --version     Show version.
-  --all         Delete all shortcuts from the database
-  --f           Fetch all shortcut names along with file names
+* ``jr --help`` for more details
 
 Whats new in version 0.8 ?:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,4 +38,4 @@ In version 0.8, you don't need to specify the interpreter for running the script
 
 License:
 ~~~~~~~~
-MIT, see LICENSE for more details.
+Jumprun is distributed under MIT license, see LICENSE for more details.
