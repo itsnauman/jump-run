@@ -2,9 +2,9 @@ from setuptools import setup
 
 setup(
     name='jumprun',
-    version='0.71',
+    version='0.80',
     py_modules=['jumprun'],
-    description='Unix CLI app for running python and ruby scripts from any'
+    description='Unix CLI app for running scripts from any'
                 ' directory in terminal',
     url='http://github.com/itsnauman/jumprun',
     author='Nauman Ahmad',
