@@ -394,7 +394,7 @@ class JumpRun:
 
         # error if new exists
         if self.shortcut_exists(new):
-            print_err('Shortcut "%s" already exists!' % old)
+            print_err('Shortcut "%s" already exists!' % new)
             return
 
         id = r[0]
