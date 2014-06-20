@@ -273,8 +273,11 @@ class JumpRun:
         # check if the file is present at the path given
         if os.path.isfile(localfile):
 
+            # file extension
+            ext = os.path.splitext(cmd_real)[1]
+
             # check for exacutable bit
-            if os.access(localfile, os.X_OK):
+            if os.access(localfile, os.X_OK) and not ext == '.jar': # jar is executable, but cannot be run directly
                 # file is executable
                 cmd = ''
 
@@ -286,8 +289,6 @@ class JumpRun:
             else:
                 # not executable
                 # try to find interpreter for the file
-
-                ext = os.path.splitext(cmd_real)[1]
 
                 interpreter = {
                     '.py': 'python',
