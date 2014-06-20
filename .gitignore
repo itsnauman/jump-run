@@ -56,8 +56,3 @@ docs/_build/
 # Required libs
 termcolor.py
 docopt.py
-
-# MightyPork's git utils
-send
-pull
-check
