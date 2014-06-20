@@ -27,7 +27,7 @@ import os
 from termcolor import colored
 from docopt import docopt
 
-#Emoji's
+# Emoji's
 S = "\xF0\x9F\x98\x83"
 L = "\xF0\x9F\x8D\xAD"
 B = "\xF0\x9F\x8D\xBA"
@@ -38,11 +38,11 @@ def main():
     This is the main function run by *entry_point* in setup.py
     """
     arg = docopt(__doc__, version=0.80)
-    #creates a hidden database in users/documents
+    # creates a hidden database in users/documents
     db_path = os.path.expanduser("~/")
     db_path = db_path + "/" + ".jumprun"
     db = sqlite3.connect(db_path)
-    #Creates table if doesn't exist on the execution of the script
+    # Creates table if doesn't exist on the execution of the script
     cursor = db.cursor()
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS path(id INTEGER PRIMARY KEY, name TEXT,
@@ -50,9 +50,9 @@ def main():
         ''')
     db.commit()
 
-#This condition handles the *add* command
+# This condition handles the *add* command
     if arg['add']:
-        #Get the path of the current dir
+        # Get the path of the current dir
         current_dir = os.getcwd()
         name = arg['<name>']
         filename = arg['<filename>']
@@ -61,7 +61,7 @@ def main():
             SELECT path,filename FROM path WHERE name=?
                 ''', (name,))
             pth = cursor.fetchone()
-            #Checks for conflicts in the database
+            # Checks for conflicts in the database
             if pth is None:
                 cursor.execute('''
                 INSERT INTO path(name, path, filename)
@@ -76,20 +76,20 @@ def main():
             print "The File Doesn't Exist"
 
     if not arg['add'] and not arg['rm'] and not arg['rename'] and not \
-    arg['show']:
+        arg['show']:
         get_name = arg['<name>']
         cursor.execute('''
         SELECT path,filename FROM path WHERE name=?
             ''', (get_name,))
         pth = cursor.fetchone()
-        #Checks if the user has made an entry using jr add
+        # Checks if the user has made an entry using jr add
         if pth is None:
             print colored("Invalid name, type jr --help for more... " + "B",
                           "red")
         else:
             file_path = str(pth[0])
             file_name = str(pth[1])
-            #Handles the execution of python/ruby scripts in the terminal
+            # Handles the execution of python/ruby scripts in the terminal
             if os.path.splitext(file_name)[1] == ".py":
                 cmd = "python %s" % (file_name)
                 os.chdir(file_path)
@@ -114,20 +114,20 @@ def main():
                               "red"
                               )
 
-#This condition handles the *rm* command
+# This condition handles the *rm* command
     if arg['rm']:
-        #Code for refreshing the entire database
+        # Code for refreshing the entire database
         if arg['--all']:
             os.remove(db_path)
             print colored("The database has been refreshed %s" % S, "cyan")
         else:
-            #Code for deleteing a specific name from database
+            # Code for deleteing a specific name from database
             name = arg['<name>']
             cursor.execute('''
             SELECT path,filename FROM path WHERE name=?
             ''', (name,))
             pth = cursor.fetchone()
-            #Checks if the shortcut to be deleted exists?
+            # Checks if the shortcut to be deleted exists?
             if pth is None:
                 print colored("%s doesn't exist" % (name), "red")
             else:
@@ -137,7 +137,7 @@ def main():
                 db.commit()
                 print colored("%s has been deleted %s" % (name, L), "cyan")
 
-#This condition handles the *rename* command
+# This condition handles the *rename* command
     if arg['rename']:
         old_name = arg['<oldname>']
         new_name = arg['<newname>']
@@ -145,7 +145,7 @@ def main():
         SELECT name, path, filename FROM path WHERE name=?
             ''', (old_name,))
         pth = cursor.fetchone()
-        #Checks if the shortcut to be renamed exists?
+        # Checks if the shortcut to be renamed exists?
         if pth is None:
             print colored("%s doesn't exist" % (old_name), "red")
         else:
@@ -153,7 +153,7 @@ def main():
             SELECT path,filename FROM path WHERE name=?
             ''', (new_name,))
             q = cursor.fetchone()
-            #Checks if the new shortcut name is already present
+            # Checks if the new shortcut name is already present
             if q is not None:
                 print colored("The name %s already exists", "red")
             else:
@@ -170,7 +170,7 @@ def main():
                 msg = "%s has been renamed to %s %s" % (old_name, new_name, L)
                 print colored(msg, "blue")
 
-#This condition handles the *show* command
+# This condition handles the *show* command
     if arg['show']:
         if arg['--f']:
             cursor.execute('''
