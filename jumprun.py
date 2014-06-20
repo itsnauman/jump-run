@@ -11,8 +11,8 @@ Usage:
     jr show <name>
     jr rename <old> <new>
     jr <name>
-    jr --help
-    jr --version
+    jr -h
+    jr -v
 
 Commands:
     add         Add a new shortcut
@@ -64,11 +64,11 @@ def ask_yes_no(question, default="yes"):
     Ask a yes/no question and return their answer.
     """
     valid = {
-        "yes":True,
-        "y":True,
-        "ye":True,
-        "no":False,
-        "n":False
+        "yes":  True,
+        "y":    True,
+        "ye":   True,
+        "no":   False,
+        "n":    False
     }
 
     if default == None:
@@ -276,7 +276,12 @@ class JumpRun:
             # check for exacutable bit
             if os.access(localfile, os.X_OK):
                 # file is executable
-                cmd = './' + cmd_real + ' ' + cmd_tail
+                cmd = ''
+
+                if not cmd_real.startswith('/'):
+                    cmd = './'
+
+                cmd = cmd + cmd_real + ' ' + cmd_tail
 
             else:
                 # not executable
@@ -481,7 +486,12 @@ class JumpRun:
 
         # cd to the folder & run the command
         os.chdir(path)
-        subprocess.call(cmd, shell=True)
+
+        try:
+            subprocess.call(cmd, shell=True)
+        except KeyboardInterrupt:
+            print('') # newline
+            return
 
 
 
