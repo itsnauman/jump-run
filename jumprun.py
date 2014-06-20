@@ -5,9 +5,12 @@ Jumprun, your command line companion.
 Use the commands to manage your shortcuts.
 
 Usage:
-    jr add <name> [--dir <dir>] <command>
-    jr rm (<name> | all)
-    jr show (<name> | all)
+    jr add <name> <command> [--workdir WORKDIR]
+    jr rm all
+    jr rm <name>
+    jr show
+    jr show all
+    jr show <name>
     jr rename <old> <new>
     jr <name>
     jr --help
@@ -20,9 +23,9 @@ Commands:
     show        List all shortcuts
 
 Options:
-    -h, --help              Show this screen.
-    --version               Show version.
-    --dir <dir>, -d <dir>   Specify working directory for the command
+    -h, --help                  Show this screen.
+    --version                   Show version.
+    --workdir <dir>, -d <dir>   Specify working directory for the command
 """
 
 import sqlite3
@@ -32,11 +35,11 @@ from termcolor import colored
 from docopt import docopt
 
 
-def print_colored(string, color):
+def print_colored(string, color, on_color=None, attrs=None):
     """
     Print text using given color
     """
-    print(colored(string, color))
+    print(colored(string, color, on_color=on_color, attrs=attrs))
 
 
 
@@ -44,7 +47,7 @@ def print_err(string):
     """
     Print error message
     """
-    print_colored(string, 'red')
+    print_colored(string, 'red', attrs=['bold'])
 
 
 
@@ -67,8 +70,6 @@ class JumpRun:
         """
 
         self.args = docopt(__doc__, version=0.80)
-
-        print("<ARGS>\n" + str(self.args) + "\n</ARGS>")
 
         #creates a data folder in home dir
         path    = os.path.expanduser('~/.jumprun')
@@ -97,7 +98,7 @@ class JumpRun:
             self.action_show()
 
         elif self.args['rename']:
-            self.action_rename
+            self.action_rename()
 
         else:
             self.action_run_command()
@@ -153,9 +154,10 @@ class JumpRun:
         """
         if args is None:
             self.db_query(query)
-            self.db.commit();
         else:
             self.db_query(query, args)
+
+        self.db.commit()
 
 
 
@@ -189,7 +191,7 @@ class JumpRun:
         """
 
         self.db_query('''
-            SELECT * FROM path WHERE name=?
+            SELECT * FROM shortcuts WHERE name=?
             ''', (name,))
 
         pth = self.db_fetch_one()
@@ -201,19 +203,27 @@ class JumpRun:
 
 
 
+    def shortcut_str(self, path, cmd):
+        s = colored('| path = ', 'cyan') + colored(path, 'yellow') + '\n' \
+          + colored('| cmd  = ', 'cyan') + colored(cmd, 'green', attrs=['bold'])
+
+        return s
+
+
+
     def action_add(self):
         """
         Add a new shortcut
         """
 
         # prepare values for new shortcut
-        path    = self.args['--dir'] or os.getcwd()
+        path    = self.args['--workdir'] or os.getcwd()
         name    = self.args['<name>']
         cmd     = self.args['<command>']
 
         # check for conflicts in DB
         if self.shortcut_exists(name):
-            print_err('The shortcut "%s" already exists' % name)
+            print_err('The shortcut "%s" already exists.' % name)
             return
 
         # if cmd has arguments, extract the command only
@@ -255,12 +265,13 @@ class JumpRun:
                 # check if interpreter was found
                 if interpreter is None:
 
-                    msg = ('Could not determine how to run %s:\n'
-                           'not executable & unknown extension.') % cmd_real;
+                    msg = ('Could not make a shortcut to "%s":'\
+                          + '\n - not executable & unknown extension.') % localfile;
 
                     print_err(msg)
+                    return
 
-                cmd = interpreter + ' ' + cmd_real + ' ' + cmd_tail
+                cmd = str(interpreter) + ' ' + str(cmd_real) + ' ' + str(cmd_tail)
         else:
             # use cmd, as given.
             pass
@@ -272,9 +283,8 @@ class JumpRun:
             ''', (str(name), str(path), str(cmd)))
 
         # show OK message
-        msg = ('Shortcut "%s" has been created.\n'
-               'dir = %s\n'
-               'cmd = %s') % (name, path, cmd)
+        msg = ('Shortcut "%s" has been created.\n' \
+             + self.shortcut_str(path, cmd)) % name
 
         print_msg(msg)
 
@@ -285,22 +295,34 @@ class JumpRun:
         Delete a shortcut
         """
 
+        name = self.args['<name>']
+
         if self.args['all']:
             # delete all
-            self.db_exec(''' TRUNCATE TABLE shortcuts ''')
+            self.db_exec(''' DELETE FROM shortcuts ''')
             print_msg("All shortcuts deleted.")
 
         else:
             # delete one
-            name = self.args['<name>']
 
+            # find by name
             self.db_exec('''
-                DELETE FROM shortcuts WHERE name=?
+                SELECT id FROM shortcuts WHERE name=?
                 ''', (name,))
 
-            if self.db_affected_rows() == 0:
+            q = self.db_fetch_one()
+            id = q[0]
+
+            # delete if exists
+            if q is None:
                 print_err('Shortcut "%s" does not exist!' % name)
+
             else:
+                self.db_exec('''
+                    DELETE FROM shortcuts WHERE id=?
+                    ''', (id,))
+
+                # show OK message
                 print_msg('Shortcut "%s" deleted.' % name)
 
 
@@ -309,25 +331,35 @@ class JumpRun:
         """
         Rename a shortcut
         """
-        old = arg['<old>']
-        new = arg['<new>']
 
+        # get old and new name from args
+        old = self.args['<old>']
+        new = self.args['<new>']
+
+        # select the old shortcut
         self.db_query('''
             SELECT id FROM shortcuts WHERE name=?
             ''', (old,))
-
         r = self.db_fetch_one()
 
+        # error if old doesn't exist
         if r == None:
             print_err('Shortcut "%s" does not exist!' % old)
             return
 
-        id = r['id']
+        # error if new exists
+        if self.shortcut_exists(new):
+            print_err('Shortcut "%s" already exists!' % old)
+            return
 
+        id = r[0]
+
+        # rename in DB
         self.db_exec('''
-            UPDATE shortcuts(name) SET (?) WHERE id=?
+            UPDATE shortcuts SET name=? WHERE id=?
             ''', (new, id))
 
+        # show OK message
         print_msg('Shortcut "%s" renamed to "%s".' % (old, new))
 
 
@@ -337,193 +369,76 @@ class JumpRun:
         Show shortcut meaning
         """
 
-        print('Action SHOW.')
+        # helper function to display one row with colors
+        # r = [name, path, command]
+        def show_a_row(r):
+            msg = colored('Shortcut: ', 'cyan') \
+                + colored(r[0], 'white', attrs=['bold']) + '\n' \
+                + self.shortcut_str(r[1], r[2]) + '\n'
+
+            print(msg)
+
+
+        name = self.args['<name>']
+
+        if name is None or name == 'all':
+            # select all shortcuts
+            self.db_query('''
+                SELECT name,path,command FROM shortcuts ORDER BY name
+                ''')
+
+            entries = self.db_fetch_all()
+
+            # show the shortcuts
+            if (entries is None) or (len(entries) == 0):
+                print_err('No shortcuts defined.')
+            else:
+                for row in entries:
+                    show_a_row(row)
+
+        else:
+            # select shortcut by name
+
+            self.db_query('''
+                SELECT name,path,command FROM shortcuts WHERE name=?
+                ''', (name,))
+
+            rec = self.db_fetch_one()
+
+            # show the shortcut
+            if rec is None:
+                print_err('Shortcut "%s" does not exist.' % name)
+            else:
+                show_a_row(rec)
 
 
 
     def action_run_command(self):
         """ Show an alias """
-        print('Action DO STUFF.')
 
+        name = self.args['<name>']
 
+        # get entry from DB
+        self.db_query('''
+            SELECT path,command FROM shortcuts WHERE name=?
+            ''', (name,))
 
+        row = self.db_fetch_one()
 
+        if row == None:
+            print_err('Shortcut "%s" does not exist.' % name)
+            return
 
-def main():
-    """
-    Main function
-    """
-    arg = docopt(__doc__, version=0.80)
-    #creates a hidden database in users/documents
-    db_path = os.path.expanduser("~/.jumprun")
-    db = sqlite3.connect(db_path)
-    #Creates table if doesn't exist on the execution of the script
-    cursor = db.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS path(
-            id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
-            name TEXT NOT NULL,
-            path TEXT NOT NULL,
-            command TEXT NOT NULL
-        )
-        ''')
-    db.commit()
+        path = row[0]
+        cmd  = row[1]
 
-#This condition handles the *add* command
-    if arg['add']:
-        #Get the path of the current dir
-        current_dir = os.getcwd()
-        name = arg['<name>']
-        filename = arg['<filename>']
-        if os.path.isfile(os.getcwd() + "/" + filename):
-            cursor.execute('''
-                SELECT path,filename FROM path WHERE name=?
-                ''', (name,))
-            pth = cursor.fetchone()
-            #Checks for conflicts in the database
-            if pth is None:
-                cursor.execute('''
-                    INSERT INTO path(name, path, filename)
-                    VALUES (?, ?, ?)
-                    ''', (str(name), str(current_dir), str(filename)))
-                db.commit()
-                msg = "%s has been added %s" % (name, L)
-                print_msg(msg)
-            else:
-                print_err("The name %s already exists" % (name))
-        else:
-            print_err("The File Doesn't Exist")
+        msg = colored('JumpRun shortcut', 'white', attrs=['bold']) + '\n' + \
+              self.shortcut_str(path, cmd) + '\n'
 
-    if not arg['add'] and not arg['rm'] and not arg['rename'] and not arg['show']:
-        get_name = arg['<name>']
-        cursor.execute('''
-            SELECT path,filename FROM path WHERE name=?
-            ''', (get_name,))
-        pth = cursor.fetchone()
-        #Checks if the user has made an entry using jr add
-        if pth is None:
-            print_err("Invalid command, see help for moe info.")
-        else:
-            file_path = str(pth[0])
-            file_name = str(pth[1])
-            #Handles the execution of python/ruby scripts in the terminal
-            if os.path.splitext(file_name)[1] == ".py":
-                cmd = "python %s" % (file_name)
-                os.chdir(file_path)
-                print_msg("Running Script:")
-                subprocess.call(cmd, shell=True)
+        print(msg)
 
-            elif os.path.splitext(file_name)[1] == ".rb":
-                cmd = "ruby %s" % (file_name)
-                os.chdir(file_path)
-                print_msg("Running Script:")
-                subprocess.call(cmd, shell=True)
-
-            elif os.path.splitext(file_name)[1] == ".pl":
-                cmd = "perl %s" % (file_name)
-                os.chdir(file_path)
-                print_msg("Running Script:")
-                subprocess.call(cmd, shell=True)
-
-            else:
-                ext = os.path.splitext(file_name)[1]
-                print_err("The %s extension is not supported" % ext)
-
-#This condition handles the *rm* command
-    if arg['rm']:
-        #Code for refreshing the entire database
-        if arg['--all']:
-            os.remove(db_path)
-            print_msg("The database has been refreshed.")
-        else:
-            #Code for deleteing a specific name from database
-            name = arg['<name>']
-            cursor.execute('''
-                SELECT path,filename FROM path WHERE name=?
-                ''', (name,))
-            pth = cursor.fetchone()
-            #Checks if the shortcut to be deleted exists?
-            if pth is None:
-                print_err("%s doesn't exist" % name)
-
-            else:
-                cursor.execute('''
-                    DELETE FROM path WHERE name=?
-                    ''', (name,))
-
-                db.commit()
-                print_msg("%s has been deleted." % name)
-
-#This condition handles the *rename* command
-    if arg['rename']:
-        old_name = arg['<oldname>']
-        new_name = arg['<newname>']
-
-        cursor.execute('''
-            SELECT name, path, filename FROM path WHERE name=?
-            ''', (old_name,))
-
-        pth = cursor.fetchone()
-        #Checks if the shortcut to be renamed exists?
-        if pth is None:
-            print_err("%s doesn't exist" % old_name)
-        else:
-            cursor.execute('''
-                SELECT path,filename FROM path WHERE name=?
-                ''', (new_name,))
-
-            q = cursor.fetchone()
-
-            #Checks if the new shortcut name is already present
-            if q is not None:
-                print_err("The name %s already exists", new_name)
-
-            else:
-                old_path = pth[1]
-                old_filename = pth[2]
-
-                cursor.execute('''
-                    DELETE FROM path WHERE name=?
-                    ''', (old_name,))
-
-                cursor.execute('''
-                    INSERT INTO path(name, path, filename)
-                    VALUES (?, ?, ?)
-                    ''', (
-                        str(new_name),
-                        str(old_path),
-                        str(old_filename)
-                    ))
-
-                db.commit()
-                msg = "%s has been renamed to %s" % (old_name, new_name)
-                print_msg(msg)
-
-#This condition handles the *show* command
-    if arg['show']:
-        if arg['--f']:
-            cursor.execute('''
-                SELECT name, filename FROM path
-                ''')
-
-            all_records = cursor.fetchall()
-            if (all_records is None) or (len(all_records) == 0):
-                print_err("No shortcuts present")
-            else:
-                for each_name in all_records:
-                    print_msg(each_name[0] + " ---> " + each_name[1])
-        else:
-            cursor.execute('''
-                SELECT name FROM path
-                ''')
-
-            all_names = cursor.fetchall()
-            if all_names is None:
-                print_err("No shorcuts present")
-            else:
-                for each_name in all_names:
-                    print_msg(each_name[0])
-
+        os.chdir(path)
+        subprocess.call(cmd, shell=True)
 
 # bootstrap
 if __name__ == "__main__":
