@@ -5,7 +5,7 @@ Jumprun, your command line companion.
 Use the commands to manage your shortcuts.
 
 Usage:
-    jr add <name> <command> [--workdir WORKDIR]
+    jr add <name> <command> [-d WORKDIR] [-f]
     jr rm all
     jr rm <name>
     jr show
@@ -25,12 +25,14 @@ Commands:
 Options:
     -h, --help                  Show this screen.
     --version                   Show version.
-    --workdir <dir>, -d <dir>   Specify working directory for the command
+    --workdir <dir>, -d <dir>   Working directory for the command
+    --force, -f                 If shortcut already exists, overwrite it.
 """
 
 import sqlite3
 import subprocess
 import os
+import sys
 from termcolor import colored
 from docopt import docopt
 
@@ -56,6 +58,41 @@ def print_msg(string):
     Print info message
     """
     print_colored(string, 'cyan')
+
+
+# via: http://stackoverflow.com/a/3041990/2180189
+def ask_yes_no(question, default="yes"):
+    """
+    Ask a yes/no question and return their answer.
+    Returns "yes" or "no".
+    """
+    valid = {
+        "yes":True,
+        "y":True,
+        "ye":True,
+        "no":False,
+        "n":False
+    }
+
+    if default == None:
+        prompt = " [y/n] "
+    elif default == "yes":
+        prompt = " [Y/n] "
+    elif default == "no":
+        prompt = " [y/N] "
+    else:
+        raise ValueError("Invalid default answer: '%s'" % default)
+
+    while True:
+        sys.stdout.write(question + prompt)
+        choice = raw_input().lower()
+        if default is not None and choice == '':
+            return valid[default]
+        elif choice in valid:
+            return valid[choice]
+        else:
+            sys.stdout.write("Please respond with 'yes' or 'no' "\
+                             "(or 'y' or 'n').\n")
 
 
 class JumpRun:
@@ -105,7 +142,7 @@ class JumpRun:
 
 
 
-    def data_file(self, name):
+    def get_data_file(self, name):
         """
         Get path to a file in the data directory
         """
@@ -119,7 +156,7 @@ class JumpRun:
         """
 
         # database file
-        db_path = self.data_file("data.sqlite")
+        db_path = self.get_data_file("data.sqlite")
 
         # comect and create cursor
         self.db     = sqlite3.connect(db_path)
@@ -177,14 +214,6 @@ class JumpRun:
 
 
 
-    def db_affected_rows(self):
-        """
-        Get number of affected rows
-        """
-        return self.cursor.rowcount
-
-
-
     def shortcut_exists(self, name):
         """
         Check if a shortcut of given name already exists in the DB
@@ -204,6 +233,10 @@ class JumpRun:
 
 
     def shortcut_str(self, path, cmd):
+        """
+        Get a string with colors describing a shortcut
+        """
+
         s = colored('| path = ', 'cyan') + colored(path, 'yellow') + '\n' \
           + colored('| cmd  = ', 'cyan') + colored(cmd, 'green', attrs=['bold'])
 
@@ -221,8 +254,10 @@ class JumpRun:
         name    = self.args['<name>']
         cmd     = self.args['<command>']
 
+        overwrite = self.args['--force']
+
         # check for conflicts in DB
-        if self.shortcut_exists(name):
+        if not overwrite and self.shortcut_exists(name):
             print_err('The shortcut "%s" already exists.' % name)
             return
 
@@ -276,6 +311,10 @@ class JumpRun:
             # use cmd, as given.
             pass
 
+        if overwrite:
+            self.db_exec('''
+                    DELETE FROM shortcuts WHERE name=?
+                    ''', (name,))
         # save to DB
         self.db_exec('''
             INSERT INTO shortcuts (name, path, command)
@@ -366,7 +405,7 @@ class JumpRun:
 
     def action_show(self):
         """
-        Show shortcut meaning
+        Show shortcut(s) value
         """
 
         # helper function to display one row with colors
@@ -414,7 +453,9 @@ class JumpRun:
 
 
     def action_run_command(self):
-        """ Show an alias """
+        """
+        Run a shortcut, if exists
+        """
 
         name = self.args['<name>']
 
@@ -432,11 +473,12 @@ class JumpRun:
         path = row[0]
         cmd  = row[1]
 
+        # show message
         msg = colored('JumpRun shortcut', 'white', attrs=['bold']) + '\n' + \
               self.shortcut_str(path, cmd) + '\n'
-
         print(msg)
 
+        # cd to the folder & run the command
         os.chdir(path)
         subprocess.call(cmd, shell=True)
 

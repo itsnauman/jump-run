@@ -4,3 +4,7 @@ __pycache__/
 
 termcolor.py
 docopt.py
+
+send
+pull
+check
