@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
-"""Jumprun, your command line companion.
-Use the commands to manage your shortcuts.
+"""Jumprun, your command line companion
 
 Usage:
     jr add <name> <command> [-d WORKDIR] [-f]
