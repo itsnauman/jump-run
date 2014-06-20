@@ -62,7 +62,6 @@ def print_msg(string):
 def ask_yes_no(question, default="yes"):
     """
     Ask a yes/no question and return their answer.
-    Returns "yes" or "no".
     """
     valid = {
         "yes":True,
@@ -82,15 +81,14 @@ def ask_yes_no(question, default="yes"):
         raise ValueError("Invalid default answer: '%s'" % default)
 
     while True:
-        sys.stdout.write(question + prompt)
-        choice = raw_input().lower()
+        print(colored(question, 'green') +  colored(prompt, 'cyan', attrs=['bold']) , end='')
+        choice = input().lower()
         if default is not None and choice == '':
             return valid[default]
         elif choice in valid:
             return valid[choice]
         else:
-            sys.stdout.write("Please respond with 'yes' or 'no' "\
-                             "(or 'y' or 'n').\n")
+            print_err("Please respond with 'y' or 'n'.")
 
 
 class JumpRun:
@@ -336,8 +334,13 @@ class JumpRun:
 
         if self.args['all']:
             # delete all
-            self.db_exec(''' DELETE FROM shortcuts ''')
-            print_msg("All shortcuts deleted.")
+
+            if ask_yes_no('Really delete ALL shortcuts?', default='no'):
+                self.db_exec(''' DELETE FROM shortcuts ''')
+                print_msg("All shortcuts deleted.")
+            else:
+                print_err("Aborted.")
+                return
 
         else:
             # delete one
