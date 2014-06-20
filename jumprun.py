@@ -482,7 +482,17 @@ class JumpRun:
         os.chdir(path)
         subprocess.call(cmd, shell=True)
 
-# bootstrap
-if __name__ == "__main__":
+
+
+def main():
+    """
+    This is the main function run by *entry_point* in setup.py
+    """
     jr = JumpRun()
     jr.run()
+
+
+
+# start from terminal directly
+if __name__ == "__main__":
+    main()
