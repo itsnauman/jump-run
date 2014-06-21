@@ -52,3 +52,7 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
+
+# Required libs
+termcolor.py
+docopt.py
