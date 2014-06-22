@@ -36,6 +36,10 @@ Whats new in version 0.8 ?:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In version 0.8, you don't need to specify the interpreter for running the script, eg previously it was ``jr add NAME file.py --python``. Now you only need to do ``jr add NAME file.py`` and the interpreter will automatically be selected.
 
+TODO:
+~~~~~~
+Add support for shell scripts 
+
 License:
 ~~~~~~~~
 Jumprun is distributed under MIT license, see LICENSE for more details.
