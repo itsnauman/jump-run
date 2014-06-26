@@ -195,3 +195,4 @@ def main():
             else:
                 for each_name in all_names:
                     print colored(each_name[0], "cyan")
+    db.close()
