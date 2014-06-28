@@ -37,7 +37,7 @@ def main():
     """
     This is the main function run by *entry_point* in setup.py
     """
-    arg = docopt(__doc__, version=0.80)
+    arg = docopt(__doc__, version=0.90)
     # creates a hidden database in users/documents
     db_path = os.path.expanduser("~/")
     db_path = db_path + "/" + ".jumprun"

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='jumprun',
-    version='0.80',
+    version='0.90',
     py_modules=['jumprun'],
     description='Unix CLI app for running scripts from any'
                 ' directory in terminal',
