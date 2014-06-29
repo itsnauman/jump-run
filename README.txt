@@ -1,7 +1,7 @@
 $ jumprun_
 
 A unix command-line tool for running scripts from any directory in
-terminal, It allows you to do it from any directory buy making shortcuts. At the current moment Perl 5,Ruby and Python interpreters are supported.
+terminal, It allows you to do it from any directory buy making shortcuts. At the current moment Perl 5, Ruby and Python interpreters are supported.
 
 Platform:
 ---------
@@ -30,6 +30,10 @@ Note: The $ (dollar) sign used below only shows that we are in the command-line,
 Whats new in version 0.8 ?:
 ----------------------------
 You no longer need to specify an interpreter using the --python or --ruby options, now Jumprun will automatically select the interpreter according to the file extension
+
+Tests:
+------
+For running the unittests, $ python test_jumprun.py 
 
 TODO:
 -----
