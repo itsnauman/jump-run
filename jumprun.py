@@ -10,10 +10,10 @@ Usage:
   jr --version
 
 Commands:
-    add         Add a new shortcut
-    rm          Delete a shortcut
-    rename      Rename a shortcut
-    show        List all shortcuts
+  add           Add a new shortcut
+  rm            Delete a shortcut
+  rename        Rename a shortcut
+  show          List all shortcuts
 
 Options:
   -h --help     Show this screen.
