@@ -12,11 +12,9 @@ This tool is strictly for UNIX based OS.
 It can be installed using PyPi, `$ pip install jumprun`.
 
 ### Dependencies:
-This tool makes use of docopt and termcolor
+This tool makes use of `docopt` and `termcolor`
 
 ### Usage:
-Note: The $ (dollar) sign used below only shows that we are in the command-line, it isn't the part of the command
-
 * Add a python shortcut with, `$ jr add NAME file.py`
 * Run the script from any dir in terminal using, `$ jr NAME`
 * Refresh the entire db with, `$ jr rm --all`
