@@ -28,6 +28,7 @@ For running the unittests, `$ python test_jumprun.py`
 
 ### TODO:
 * Add support for shell scripts 
+* The code is entirely procedural, so yeah!
 
 ### License:
 `Jumprun` is distributed under MIT license, see `LICENSE` for more details.
