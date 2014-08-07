@@ -15,6 +15,28 @@ It can be installed using PyPi, `$ pip install jumprun`.
 This tool makes use of `docopt` and `termcolor`
 
 ### Usage:
+```
+Usage:
+  jr add <name> <filename>
+  jr rm [<name>] [--all]
+  jr show [--f]
+  jr rename <oldname> <newname>
+  jr <name>
+  jr -h | --help
+  jr --version
+
+Commands:
+  add           Add a new shortcut
+  rm            Delete a shortcut
+  rename        Rename a shortcut
+  show          List all shortcuts
+
+Options:
+  -h --help     Show this screen.
+  --version     Show version.
+  --all         Delete all shortcuts from the database
+  --f           Fetch all shortcut names along with file names
+```
 * Add a python shortcut with, `$ jr add NAME file.py`
 * Run the script from any dir in terminal using, `$ jr NAME`
 * Refresh the entire db with, `$ jr rm --all`
