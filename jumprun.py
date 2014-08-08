@@ -196,3 +196,8 @@ def main():
                 for each_name in all_names:
                     print colored(each_name[0], "cyan")
     db.close()
+
+
+if __name__ == "__main__":
+  # if script is run directly from terminal
+    main()
