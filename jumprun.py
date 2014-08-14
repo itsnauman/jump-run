@@ -21,6 +21,8 @@ Options:
   --all         Delete all shortcuts from the database
   --f           Fetch all shortcut names along with file names
 """
+from __future__ import print_function
+from future.builtins import str
 import sqlite3
 import subprocess
 import os
@@ -69,11 +71,11 @@ def main():
                     ''', (str(name), str(current_dir), str(filename)))
                 db.commit()
                 msg = "%s has been added %s" % (name, L)
-                print colored(msg, "cyan")
+                print(colored(msg, "cyan"))
             else:
-                print colored("The name %s already exists" % (name), "red")
+                print(colored("The name %s already exists" % (name), "red"))
         else:
-            print "The File Doesn't Exist"
+            print("The File Doesn't Exist")
 
     if not arg['add'] and not arg['rm'] and not arg['rename'] and not \
         arg['show']:
@@ -84,8 +86,8 @@ def main():
         pth = cursor.fetchone()
         # Checks if the user has made an entry using jr add
         if pth is None:
-            print colored("Invalid name, type jr --help for more... " + "B",
-                          "red")
+            print(colored("Invalid name, type jr --help for more... " + "B",
+                          "red"))
         else:
             file_path = str(pth[0])
             file_name = str(pth[1])
@@ -93,33 +95,33 @@ def main():
             if os.path.splitext(file_name)[1] == ".py":
                 cmd = "python %s" % (file_name)
                 os.chdir(file_path)
-                print colored("Running Script:", "cyan")
+                print(colored("Running Script:", "cyan"))
                 subprocess.call(cmd, shell=True)
 
             elif os.path.splitext(file_name)[1] == ".rb":
                 cmd = "ruby %s" % (file_name)
                 os.chdir(file_path)
-                print colored("Running Script:", "cyan")
+                print(colored("Running Script:", "cyan"))
                 subprocess.call(cmd, shell=True)
 
             elif os.path.splitext(file_name)[1] == ".pl":
                 cmd = "perl %s" % (file_name)
                 os.chdir(file_path)
-                print colored("Running Script:", "cyan")
+                print(colored("Running Script:", "cyan"))
                 subprocess.call(cmd, shell=True)
 
             else:
                 ext = os.path.splitext(file_name)[1]
-                print colored("The %s extension is not supported" % ext,
+                print(colored("The %s extension is not supported" % ext,
                               "red"
-                              )
+                              ))
 
 # This condition handles the *rm* command
     if arg['rm']:
         # Code for refreshing the entire database
         if arg['--all']:
             os.remove(db_path)
-            print colored("The database has been refreshed %s" % S, "cyan")
+            print(colored("The database has been refreshed %s" % S, "cyan"))
         else:
             # Code for deleteing a specific name from database
             name = arg['<name>']
@@ -129,13 +131,13 @@ def main():
             pth = cursor.fetchone()
             # Checks if the shortcut to be deleted exists?
             if pth is None:
-                print colored("%s doesn't exist" % (name), "red")
+                print(colored("%s doesn't exist" % (name), "red"))
             else:
                 cursor.execute('''
                     DELETE FROM path WHERE name=?
                     ''', (name,))
                 db.commit()
-                print colored("%s has been deleted %s" % (name, L), "cyan")
+                print(colored("%s has been deleted %s" % (name, L), "cyan"))
 
 # This condition handles the *rename* command
     if arg['rename']:
@@ -147,7 +149,7 @@ def main():
         pth = cursor.fetchone()
         # Checks if the shortcut to be renamed exists?
         if pth is None:
-            print colored("%s doesn't exist" % (old_name), "red")
+            print(colored("%s doesn't exist" % (old_name), "red"))
         else:
             cursor.execute('''
             SELECT path,filename FROM path WHERE name=?
@@ -155,7 +157,7 @@ def main():
             q = cursor.fetchone()
             # Checks if the new shortcut name is already present
             if q is not None:
-                print colored("The name %s already exists", "red")
+                print(colored("The name %s already exists", "red"))
             else:
                 old_path = pth[1]
                 old_filename = pth[2]
@@ -168,7 +170,7 @@ def main():
                 ''', (str(new_name), str(old_path), str(old_filename)))
                 db.commit()
                 msg = "%s has been renamed to %s %s" % (old_name, new_name, L)
-                print colored(msg, "blue")
+                print(colored(msg, "blue"))
 
 # This condition handles the *show* command
     if arg['show']:
@@ -178,23 +180,23 @@ def main():
                 ''')
             all_records = cursor.fetchall()
             if all_records is None:
-                print colored("No shortcuts present", "red")
+                print(colored("No shortcuts present", "red"))
             else:
                 for each_name in all_records:
-                    print colored(each_name[0] + " ---> " +
+                    print(colored(each_name[0] + " ---> " +
                                   each_name[1],
                                   "cyan"
-                                  )
+                                  ))
         else:
             cursor.execute('''
             SELECT name FROM path
                 ''')
             all_names = cursor.fetchall()
             if all_names is None:
-                print colored("No shorcuts present", "red")
+                print(colored("No shorcuts present", "red"))
             else:
                 for each_name in all_names:
-                    print colored(each_name[0], "cyan")
+                    print(colored(each_name[0], "cyan"))
     db.close()
 
 
