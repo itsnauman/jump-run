@@ -14,6 +14,7 @@ setup(
     install_requires=[
         'termcolor',
         'docopt',
+        'future',
     ],
     entry_points='''
         [console_scripts]
