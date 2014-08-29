@@ -111,10 +111,17 @@ def main():
                 subprocess.call(cmd, shell=True)
 
             else:
-                ext = os.path.splitext(file_name)[1]
-                print(colored("The %s extension is not supported" % ext,
-                              "red"
-                              ))
+                os.chdir(file_path)
+                cmd = file_name
+                if os.path.isfile(cmd) and file_name.startswith('./') and \
+                        os.access(cmd, os.X_OK):
+                    print(colored("Running Script:", "cyan"))
+                    subprocess.call(cmd, shell=True)
+                else:
+                    ext = os.path.splitext(file_name)[1]
+                    print(colored("The %s extension is not supported" % ext,
+                                  "red"
+                                  ))
 
 # This condition handles the *rm* command
     if arg['rm']:
