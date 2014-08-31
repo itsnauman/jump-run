@@ -1,6 +1,6 @@
 `$ jumprun_`
 =============
-
+[![Build Status](https://travis-ci.org/itsnauman/jumprun.svg?branch=master)](https://travis-ci.org/itsnauman/jumprun)
 A unix command-line tool for running scripts from any directory in terminal, It allows you to do it from any directory buy making shortcuts. At the current moment `Perl 5`, `Ruby` and `Python` interpreters are supported.
 
 ### Platform:
