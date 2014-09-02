@@ -1,6 +1,6 @@
 import unittest
-from docopt import docopt
 import jumprun
+from docopt import docopt
 
 doc = jumprun.__doc__
 
@@ -8,12 +8,14 @@ doc = jumprun.__doc__
 class TestJumprun(unittest.TestCase):
 
     def test_add(self):
+        """Test the add command"""
         args = docopt(doc, ['add', 'Test', 'test_file.py'])
         self.assertEqual(args['add'], True)
         self.assertEqual(args['<name>'], 'Test')
         self.assertEqual(args['<filename>'], 'test_file.py')
 
     def test_rm(self):
+        """Test the remove command"""
         args = docopt(doc, ['rm', 'Test'])
         self.assertEqual(args['rm'], True)
         self.assertEqual(args['<name>'], 'Test')
@@ -24,6 +26,7 @@ class TestJumprun(unittest.TestCase):
         self.assertEqual(args['--all'], True)
 
     def test_show(self):
+        """Test the show command"""
         args = docopt(doc, ['show'])
         self.assertEqual(args['show'], True)
         self.assertEqual(args['--f'], False)
@@ -32,12 +35,14 @@ class TestJumprun(unittest.TestCase):
         self.assertEqual(args['--f'], True)
 
     def test_rename(self):
+        """Test the rename command"""
         args = docopt(doc, ['rename', 'Test', 'NewTest'])
         self.assertEqual(args['rename'], True)
         self.assertEqual(args['<oldname>'], 'Test')
         self.assertEqual(args['<newname>'], 'NewTest')
 
     def test_run(self):
+        """Test with no main run command"""
         args = docopt(doc, ['Test'])
         self.assertEqual(args['rename'], False)
         self.assertEqual(args['show'], False)
