@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='jumprun',
-    version='1.10',
+    version='1.11',
     py_modules=['jumprun'],
     description='Unix CLI app for running scripts from any'
                 ' directory in terminal',
@@ -14,7 +14,6 @@ setup(
     install_requires=[
         'termcolor',
         'docopt',
-        'future',
     ],
     entry_points='''
         [console_scripts]
