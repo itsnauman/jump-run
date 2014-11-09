@@ -50,7 +50,7 @@ Options:
     --version                   Show version.
     --workdir <dir>, -d <dir>   Working directory for the command
     --force, -f                 Overwrite existing shortcut
-
+```
 
 ### Tests:
 For running the unittests, `$ python test_jumprun.py` 
