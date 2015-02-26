@@ -437,7 +437,7 @@ class JumpRun(object):
 
         row = self.db_fetch_one()
 
-        if row == None:
+        if row is None:
             print_err('Shortcut "%s" does not exist.' % name)
             return
 
