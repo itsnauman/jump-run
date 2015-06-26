@@ -1,15 +1,26 @@
 from setuptools import setup
+import sys
+import os
+
+if not sys.version_info[0] == 3:
+    print "Sorry, Jumprun doesn't support Python 2"
+    sys.exit(1)
+
+
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name='jumprun',
-    version='1.11',
+    version='1.12',
     py_modules=['jumprun'],
-    description='Unix CLI app for running scripts from any'
-                ' directory in terminal',
+    description='Command-line utility to create shortcuts'
+                ' for scripts',
     url='http://github.com/itsnauman/jumprun',
     author='Nauman Ahmad',
     author_email='nauman-ahmad@outlook.com',
     license='MIT',
+    long_description=read('README.md'),
     include_package_data=True,
     install_requires=[
         'termcolor',
