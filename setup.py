@@ -15,7 +15,7 @@ setup(
     version='1.12',
     py_modules=['jumprun'],
     description='Command-line utility to create shortcuts'
-                ' for scripts',
+                ' for running scripts',
     url='http://github.com/itsnauman/jumprun',
     author='Nauman Ahmad',
     author_email='nauman-ahmad@outlook.com',
