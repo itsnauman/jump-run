@@ -75,12 +75,12 @@ def ask_yes_no(question, default="yes"):
 
 class JumpRun(object):
 
-    def __init__(self):
+    def __init__(self, args):
         """
         Prepare database & init the object
         """
 
-        self.args = docopt(__doc__, version=1.11)
+        self.args = args
 
         # creates a data folder in home dir
         path = os.path.expanduser('~/.jumprun')
@@ -447,10 +447,10 @@ class JumpRun(object):
 
 
 def main():
-    jr = JumpRun()
+    args = docopt(__doc__, version=1.12)
+    jr = JumpRun(args)
     jr.run()
 
 
-# start from terminal directly
 if __name__ == "__main__":
     main()
