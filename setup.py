@@ -3,7 +3,7 @@ import sys
 import os
 
 if not sys.version_info[0] == 3:
-    print "Sorry, Jumprun doesn't support Python 2"
+    print("Sorry, Jumprun doesn't support Python 2")
     sys.exit(1)
 
 
