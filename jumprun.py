@@ -1,6 +1,4 @@
-#!/usr/bin/python3
-
-"""Jumprun, your command line companion
+"""Jumprun, your command line companion!
 Usage:
     jr add <name> <command> [-d WORKDIR] [-f]
     jr rm all
@@ -28,35 +26,24 @@ import sqlite3
 import subprocess
 import os
 import sys
+
 from termcolor import colored
 from docopt import docopt
 
 
 def print_colored(string, color, on_color=None, attrs=None):
-    """
-    Print text using given color
-    """
     print(colored(string, color, on_color=on_color, attrs=attrs))
 
 
 def print_err(string):
-    """
-    Print error message
-    """
     print_colored(string, 'red', attrs=['bold'])
 
 
 def print_msg(string):
-    """
-    Print info message
-    """
     print_colored(string, 'cyan')
 
 
 def ask_yes_no(question, default="yes"):
-    """
-    Ask a yes/no question and return their answer.
-    """
     valid = {
         "yes":  True,
         "y":    True,
