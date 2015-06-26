@@ -1,10 +1,10 @@
-`$ jumprun_`
-=============
+# Jumprun
+
 [![Build Status](https://travis-ci.org/itsnauman/jumprun.svg?branch=master)](https://travis-ci.org/itsnauman/jumprun)
 
-A unix command-line tool for running scripts from any directory in terminal. Jumprun allows you to make shortcuts for scripts.
+A command-line utility for creating shortcuts for running scripts.
 
-### Supported Interpreters:
+#### Supported Interpreters:
 
  - Python
  - Ruby
@@ -13,19 +13,20 @@ A unix command-line tool for running scripts from any directory in terminal. Jum
  - PHP
  - Java
 
-### Platform:
+#### Installation:
 
-This tool is strictly for UNIX based OS's.
+It can be installed using PyPi, `$ pip install jumprun`. Jumprun supports only Python 3 at the moment!
 
-### Installation:
+#### Example
+Say I have a python file `test_hello.py` in the `~/Developer` directory and I want to make a shortcut for
+running this script.
 
-It can be installed using PyPi, `$ pip install jumprun`.
+ - Run `jr add testhello test_hello.py` in `~/Developer' to make a shortcut.
+ - Now you can run `jr testhello` from anywhere in terminal to execute the script.
+ - You can get further details about a command using `jr show testhello`.
+ - You can erase all shortcuts using `jr rm all`
 
-### Dependencies:
-
-This tool makes use of `docopt` and `termcolor`
-
-### Usage:
+#### Usage:
 ```
 Usage:
     jr add <name> <command> [-d WORKDIR] [-f]
@@ -52,8 +53,8 @@ Options:
     --force, -f                 Overwrite existing shortcut
 ```
 
-### Tests:
-For running the unittests, `$ python test_jumprun.py` 
+#### Tests:
+`$ python test_jumprun.py`
 
-### License:
+#### License:
 `Jumprun` is distributed under MIT license, see `LICENSE` for more details.
