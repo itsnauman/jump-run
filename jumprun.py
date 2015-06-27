@@ -252,6 +252,7 @@ class JumpRun(object):
                 interpreter = {
                     '.py': 'python',
                     '.rb': 'ruby',
+                    '.js': 'node',
                     '.pl': 'perl',
                     '.sh': 'sh',
                     '.php': 'php',

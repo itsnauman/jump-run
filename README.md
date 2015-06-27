@@ -8,6 +8,7 @@ A command-line utility for creating shortcuts for running scripts.
 
  - Python
  - Ruby
+ - Node.js
  - Perl
  - Shell
  - PHP
