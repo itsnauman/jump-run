@@ -22,7 +22,7 @@ It can be installed using PyPi, `$ pip install jumprun`. Jumprun supports only P
 Say I have a python file `test_hello.py` in the `~/Developer` directory and I want to make a shortcut for
 running this script.
 
- - Run `jr add testhello test_hello.py` in `~/Developer' to make a shortcut.
+ - Run `jr add testhello test_hello.py` in `~/Developer` to make a shortcut.
  - Now you can run `jr testhello` from anywhere in terminal to execute the script.
  - You can get further details about a command using `jr show testhello`.
  - You can erase all shortcuts using `jr rm all`
