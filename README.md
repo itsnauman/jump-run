@@ -19,7 +19,7 @@ A command-line utility for creating shortcuts for running scripts.
 It can be installed using PyPi, `$ pip install jumprun`. Jumprun supports only Python 3 at the moment!
 
 #### Example
-Say I have a python file `test_hello.py` in the ``~/Developer`` directory and I want to make a shortcut for
+Say I have a python file `test_hello.py` in the `~/Developer` directory and I want to make a shortcut for
 running this script.
 
  - Run `jr add testhello test_hello.py` in `~/Developer' to make a shortcut.
